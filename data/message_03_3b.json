@@ -1,0 +1,55 @@
+{
+  "comment": "3b刷新流程",
+  "project": "NL-3B",
+  "cur_device":"pcan",
+  "cur_channel":1,
+  "check_range": ["700", "7FF"],
+  "mask": "0x1DD47818",
+  "message_FC":["7A1","8","30","00","00","00","00","00","00","00"],
+  "concat_msg":
+  {
+    "head_data": ["7A1", "8"],
+    "FC_check":"(.*)id=07A9 l=8(.*)30",
+    "flash_data_check": "(.*)id=07A9 l=8(.*)76"
+  },
+  "send_message":
+  {
+    "message_01": ["SF", "1001", 0.1],
+    "message_02": ["SF", "1003", 0.1],
+    "message_03": ["SF", "1002", 0.1],
+    "message_04": ["boot_seed", "2711", 0.1],
+    "message_05": ["boot_access", "2712", 0.1],
+    "message_06": ["request_driver", 0.1],
+    "message_07": ["flash_driver", 0.1],
+    "message_08": ["exit_driver", 0.1],
+    "message_09": ["check_crc_driver", 0.1],
+    "message_10": ["erase_memory", 0.1],
+    "message_11": ["request_app", 0.01],
+    "message_12": ["flash_app", 0.1],
+    "message_13": ["exit_app", 0.1],
+    "message_14": ["check_crc_app", 0.1],
+    "message_15": ["check_dependence", 0.1],
+    "message_16": ["SF", "1101", 2],
+    "message_17": ["SF", "1003", 0]
+
+  },
+  "check_message":
+  {
+    "message_01": "(.*)id=07A9 l=8(.*)065001",
+    "message_02": "(.*)id=07A9 l=8(.*)065003",
+    "message_03": "(.*)id=07A9 l=8(.*)065002",
+    "message_04": "(.*)id=07A9 l=8(.*)066711",
+    "message_05": "(.*)id=07A9 l=8(.*)026712",
+    "message_06": "(.*)id=07A9 l=8(.*)0474",
+    "message_08": "(.*)id=07A9 l=8(.*)0177",
+    "message_09": "(.*)id=07A9 l=8(.*)0571010202",
+    "message_10": "(.*)id=07A9 l=8(.*)057101FF0004",
+    "message_11": "(.*)id=07A9 l=8(.*)0474",
+    "message_13": "(.*)id=07A9 l=8(.*)0177",
+    "message_14": "(.*)id=07A9 l=8(.*)0571010202",
+    "message_15": "(.*)id=07A9 l=8(.*)057101FF",
+    "message_16": "(.*)id=07A9 l=8(.*)5101",
+    "message_17": "(.*)id=07A9 l=8(.*)065003"
+
+  }
+}
