@@ -135,5 +135,5 @@ if __name__ == "__main__":
     # demo_can.transmit_msg(["790","8","02","3E","00","00","00","00","00","00"], "(.*)id=0798 l=8(.*)027E00")
     demo_can.write_request_messages(["7A1", "8", "02", "10", "01", "00", "00", "00", "00", "00"])
     time.sleep(0.1)
-    demo_can.read_respond_messages()
-    # demo_can.check_response_msg("(.*)id=07A9 l=8(.*)065001")
+    # demo_can.read_respond_messages()
+    demo_can.check_response_msg("(.*)id=07A9 l=8(.*)065001")

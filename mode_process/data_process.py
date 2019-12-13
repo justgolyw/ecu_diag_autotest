@@ -206,7 +206,8 @@ class DataProcess():
         crcval = 0xFFFFFFFF
         data_str = ""
         for line in line_list:
-            data_str += line.strip("\n")[12:-2]
+            if str(line).startswith('S3'):
+                data_str += line.strip("\n")[12:-2]
         data_list = self.cut_text(data_str, 2)
         data_length = len(data_list)
         for i in range(0, data_length):
@@ -220,8 +221,8 @@ class DataProcess():
 if __name__ == "__main__":
     pcan = Pcan(PCAN_USBBUS1, PCAN_BAUD_500K, PCAN_MESSAGE_FILTER)
     fp = DataProcess()
-    json_data = fp.read_json_file("../date/message_03_3b.json")
-    print(json_data)
+    # json_data = fp.read_json_file("../date/message_03_3b.json")
+    # print(json_data)
     # json_msg = fp.get_json_msg(json_data, "concat_msg,head_data")
     # print(json_msg)
     # print(type(json_msg))
@@ -244,9 +245,9 @@ if __name__ == "__main__":
     # print(path)
     # print(fp.get_file_list(path,['.srec']))
     # path = "../data/flash_driver.srec"
-    # path = "../data"
-    # line_list = fp.open_files(path)
-    # print(line_list)
+    path = "../data/NL3B_AVM_210494_ASW0_6600249215_030001.srec"
+    line_list = fp.open_file(path)
+    print(line_list)
 
     # fp.find_s3_start(line_list)
     # address = fp.get_download_address(line_list)
@@ -259,8 +260,8 @@ if __name__ == "__main__":
     # data_list = fp.get_flash_data(line_list)
     # print(data_list)
 
-    # crc = fp.calc_crc32(line_list)
-    # print(crc)
+    crc = fp.calc_crc32(line_list)
+    print(crc)
     # print(int(264))
     # file_list = fp.get_file_list(path,['.srec'])
     # print(file_list)
