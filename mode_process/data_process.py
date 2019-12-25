@@ -8,6 +8,9 @@
 
 import re
 import json
+
+from jsmin import jsmin
+
 from device.pcan.PCANBase import Pcan
 from device.pcan.PCANBasic import *
 from util.invalid_exception import InvalidException
@@ -169,8 +172,6 @@ class DataProcess():
             if str(lineList[i]).startswith("S3"):
                 s3StartIndex = i  # S3 开始的行数
                 # print("find S3 start index: ", s3StartIndex)
-                # print(line_list[s3StartIndex])
-                # print(len(line_list[s3StartIndex].strip('\n')))
                 return s3StartIndex
 
         print("can not find S3 start")
@@ -219,12 +220,16 @@ class DataProcess():
 
 
 if __name__ == "__main__":
+
     pcan = Pcan(PCAN_USBBUS1, PCAN_BAUD_500K, PCAN_MESSAGE_FILTER)
     fp = DataProcess()
-    # json_data = fp.read_json_file("../date/message_03_3b.json")
+    json_data = fp.read_json_file(r'C:\Users\yangwei.li\Desktop\python\MyFlash\data\message_03_3b.json')
     # print(json_data)
-    # json_msg = fp.get_json_msg(json_data, "concat_msg,head_data")
-    # print(json_msg)
+    json_msg = fp.get_json_msg(json_data, "send_message,message_01")
+    thread_msg = fp.get_json_msg(json_data, "thread_msg")
+    for each in json_msg[2]:
+        can_msg = fp.get_json_msg(thread_msg, each)[:-1]
+        print(can_msg)
     # print(type(json_msg))
     # print(fp.get_can_message(['2c', '40', '00', '00', '00', '00', '00', '00']))
     # print(fp.cut_text('123', 7*2))
@@ -245,9 +250,9 @@ if __name__ == "__main__":
     # print(path)
     # print(fp.get_file_list(path,['.srec']))
     # path = "../data/flash_driver.srec"
-    path = "../data/NL3B_AVM_210494_ASW0_6600249215_030001.srec"
-    line_list = fp.open_file(path)
-    print(line_list)
+    # path = "../data/NL3B_Oversea.srec"
+    # line_list = fp.open_file(path)
+    # print(line_list)
 
     # fp.find_s3_start(line_list)
     # address = fp.get_download_address(line_list)
@@ -260,8 +265,8 @@ if __name__ == "__main__":
     # data_list = fp.get_flash_data(line_list)
     # print(data_list)
 
-    crc = fp.calc_crc32(line_list)
-    print(crc)
+    # crc = fp.calc_crc32(line_list)
+    # print(crc)
     # print(int(264))
     # file_list = fp.get_file_list(path,['.srec'])
     # print(file_list)

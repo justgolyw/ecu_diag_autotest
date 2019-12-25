@@ -57,6 +57,7 @@ class CommProcess():
                 self.max_block_size = self.request_download(pcan, self.line_list[driver_file_index], check_msg)
             elif flag == "flash_driver":
                 self.data_transfer(pcan, self.line_list[driver_file_index], self.max_block_size)
+                # self.data_transfer(pcan, self.line_list[driver_file_index])
             elif flag == "exit_driver" or flag == "exit_app":
                 check_msg = self.check_messages[key]  # 检查字符串
                 self.transfer_exit(pcan, check_msg)
@@ -71,6 +72,7 @@ class CommProcess():
                 self.max_block_size = self.request_download(pcan, self.line_list[app_file_index], check_msg)
             elif flag == "flash_app":
                 self.data_transfer(pcan, self.line_list[app_file_index], self.max_block_size)
+                # self.data_transfer(pcan, self.line_list[app_file_index])
             elif flag == "check_crc_app":
                 check_msg = self.check_messages[key]  # 检查字符串
                 self.check_crc(pcan, self.line_list[app_file_index], check_msg)
@@ -156,7 +158,9 @@ class CommProcess():
     # 传输数据
     # dataLength:int
     # maxBlockSize:int
-    def data_transfer(self, pcan, line_list, max_block_size):
+    def data_transfer(self, pcan, line_list, max_block_size=0x5B4):
+        max_block_size = max_block_size - 2
+
         block_index = 0 # block 索引
         block_frame_index = 0  # 每一个block的帧数索引
         data_count = 0
@@ -172,20 +176,23 @@ class CommProcess():
                 block_index = 0
             subframe_count = 0 # 最大值为15
             block_index += 1
-            if block_frame_index == 0: # 第一个block
+            if block_frame_index == 0: # 第一个block的第一帧
                 if data_size < max_block_size: # for flash driver
                     reqByte0 = hex(0x10 | ((data_size >> 8) & 0x0f))[2:]
                     reqByte1 = hex(data_size + 2)[3:]
 
                 else:
-                    if i == (max_block_count-1): # 最后一个block
+                    if i == (max_block_count-1): # 最后一个block的第一帧
                         last_block_size = data_size - ((max_block_count-1) * max_block_size)  # 最后一个block的字节数
                         reqByte0 = hex(0x10 | ((last_block_size >> 8) & 0x0f))[2:]
                         reqByte1 = hex(last_block_size + 2)[3:]
+                        # reqByte1 = hex(last_block_size)[3:]
 
-                    else: # 其他block
-                        reqByte0 = hex(0x10 | ((max_block_size >> 8) & 0x0f))[2:]
+                    else: # 其他block的第一帧
+                        reqByte0 = hex(0x10 | ((max_block_size + 2 >> 8) & 0x0f))[2:]
                         reqByte1 = hex(max_block_size + 2)[3:]
+                        # reqByte0 = hex(0x10 | ((max_block_size>> 8) & 0x0f))[2:]
+                        # reqByte1 = hex(max_block_size)[3:]
 
                 reqByte2 = '36'
                 reqByte3 = hex(block_index)[2:].rjust(2, '0')
