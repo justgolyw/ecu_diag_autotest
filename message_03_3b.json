@@ -14,16 +14,10 @@
   },
   "send_message":
   {
-  	"message_01": ["SF", "22F193", 0.1],
-	"message_02": ["SF", "22F180", 0.1],
     "message_03": ["SF", "1003", 0.1],
-	"message_04": ["SF", "8502", 0.1],
-	"message_05": ["SF", "280101", 0.1],
-    "message_06": ["SF", "1002", 0],
+    "message_06": ["SF", "1002", 0.1],
     "message_07": ["boot_seed", "2711", 0.1],
     "message_08": ["boot_access","2712", 0.1],
-	"message_09": ["FFCF", "2EF19803020103000201090809000202040800", 0.1],
-	"message_10": ["SF", "2EF19901090809", 0.1],
     "message_11": ["request_driver", 0.1],
     "message_12": ["flash_driver", 0.1],
     "message_13": ["exit_driver", 0.1],
@@ -43,16 +37,11 @@
   },
   "check_message":
   {
-    "message_01": "(.*)id=07A9 l=8(.*)62F193",
-    "message_02": "(.*)id=07A9 l=8(.*)62F180",
+
     "message_03": "(.*)id=07A9 l=8(.*)065003",
-    "message_04": "(.*)id=07A9 l=8(.*)02C502",
-    "message_05": "(.*)id=07A9 l=8(.*)026801",
     "message_06": "(.*)id=07A9 l=8(.*)065002",
     "message_07": "(.*)id=07A9 l=8(.*)066711",
     "message_08": "(.*)id=07A9 l=8(.*)026712",
-	"message_09": "(.*)id=07A9 l=8(.*)036EF198",
-    "message_10": "(.*)id=07A9 l=8(.*)036EF199",
     "message_11": "(.*)id=07A9 l=8(.*)0474",
     "message_13": "(.*)id=07A9 l=8(.*)0177",
     "message_14": "(.*)id=07A9 l=8(.*)057101020204",

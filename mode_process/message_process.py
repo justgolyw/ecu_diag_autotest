@@ -71,8 +71,8 @@ class CommProcess():
                 check_msg = self.check_messages[key]  # 检查字符串
                 self.max_block_size = self.request_download(pcan, self.line_list[app_file_index], check_msg)
             elif flag == "flash_app":
-                self.data_transfer(pcan, self.line_list[app_file_index], self.max_block_size)
-                # self.data_transfer(pcan, self.line_list[app_file_index])
+                # self.data_transfer(pcan, self.line_list[app_file_index], self.max_block_size)
+                self.data_transfer(pcan, self.line_list[app_file_index])
             elif flag == "check_crc_app":
                 check_msg = self.check_messages[key]  # 检查字符串
                 self.check_crc(pcan, self.line_list[app_file_index], check_msg)
@@ -130,6 +130,8 @@ class CommProcess():
         if flag == '10':
             message_FC = self.dataProcess.get_json_msg(self.json_data, "message_FC")
             pcan.write_request_messages(message_FC)
+            pcan.check_response_msg("(.*)id=07A9")
+
 
     # 发送多帧报文
     def send_check_mult(self, pcan, send_msg, check_msg):
@@ -157,18 +159,18 @@ class CommProcess():
 
     # 传输数据
     # dataLength:int
-    # maxBlockSize:int
-    def data_transfer(self, pcan, line_list, max_block_size=0x5B4):
-        max_block_size = max_block_size - 2
+    # maxBlockSize:int(0x5B2)
+    def data_transfer(self, pcan, line_list, max_block_size=0x5B2):
+        max_block_size_data = max_block_size - 2
 
         block_index = 0 # block 索引
         block_frame_index = 0  # 每一个block的帧数索引
         data_count = 0
         # subframe_count = 0
-        frameCount_PerBlock = int((max_block_size - 4) / 7) + 1 # 每一个block 除去首帧，剩余的帧数
+        frameCount_PerBlock = int((max_block_size_data - 4) / 7) + 1 # 每一个block 除去首帧，剩余的帧数
         data_size = int(self.dataProcess.get_data_size(line_list), 16)
         flash_data = self.dataProcess.get_flash_data(line_list)
-        max_block_count = int(data_size/max_block_size) + 1
+        max_block_count = int(data_size/max_block_size_data) + 1
         send_msg = []
 
         for i in range(max_block_count):
@@ -177,20 +179,20 @@ class CommProcess():
             subframe_count = 0 # 最大值为15
             block_index += 1
             if block_frame_index == 0: # 第一个block的第一帧
-                if data_size < max_block_size: # for flash driver
+                if data_size < max_block_size_data: # for flash driver
                     reqByte0 = hex(0x10 | ((data_size >> 8) & 0x0f))[2:]
                     reqByte1 = hex(data_size + 2)[3:]
 
                 else:
                     if i == (max_block_count-1): # 最后一个block的第一帧
-                        last_block_size = data_size - ((max_block_count-1) * max_block_size)  # 最后一个block的字节数
+                        last_block_size = data_size - ((max_block_count-1) * max_block_size_data)  # 最后一个block的字节数
                         reqByte0 = hex(0x10 | ((last_block_size >> 8) & 0x0f))[2:]
                         reqByte1 = hex(last_block_size + 2)[3:]
                         # reqByte1 = hex(last_block_size)[3:]
 
                     else: # 其他block的第一帧
-                        reqByte0 = hex(0x10 | ((max_block_size + 2 >> 8) & 0x0f))[2:]
-                        reqByte1 = hex(max_block_size + 2)[3:]
+                        reqByte0 = hex(0x10 | ((max_block_size_data + 2 >> 8) & 0x0f))[2:]
+                        reqByte1 = hex(max_block_size_data + 2)[3:]
                         # reqByte0 = hex(0x10 | ((max_block_size>> 8) & 0x0f))[2:]
                         # reqByte1 = hex(max_block_size)[3:]
 
@@ -262,11 +264,11 @@ class CommProcess():
                         break
 
                 # 处理block的最后一行数据
-                if (block_index != max_block_count) and (max_block_size - 4 - 7*(frameCount_PerBlock-1) < 7):
+                if (block_index != max_block_count) and (max_block_size_data - 4 - 7*(frameCount_PerBlock-1) < 7):
                     if block_frame_index == 1:
                         subframe_count = 1
                     data_list = []
-                    for n in range(data_count, max_block_size*block_index):
+                    for n in range(data_count, max_block_size_data*block_index):
                         data_list.append(flash_data[n])
                     for n in range(7 - len(data_list)):
                         data_list.append('00')
@@ -278,7 +280,7 @@ class CommProcess():
                     reqByte5 = data_list[4]
                     reqByte6 = data_list[5]
                     reqByte7 = data_list[6]
-                    data_count += (max_block_size*block_index - data_count)
+                    data_count += (max_block_size_data*block_index - data_count)
                     send_msg.clear()
                     send_msg.append(self.head_data)
                     send_msg.append(reqByte0 + reqByte1 + reqByte2 + reqByte3 + reqByte4 + reqByte5 + reqByte6 + reqByte7)

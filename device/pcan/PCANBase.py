@@ -107,15 +107,16 @@ class Pcan():
                 str_msg += hex(message.DATA[i])[2:].rjust(2, '0')
             str_msg = str_msg.upper()
             if current_id != hex(0):
-                if status == PCAN_ERROR_OK:
+                if status == PCAN_ERROR_OK :
                     # print('response message:', str_msg)
-                    logger.write('response message:' + str_msg + "\n")
-                    match_group = re.match(check_msg_str.upper(), str_msg)
-                    if match_group:
-                        # print("found ", check_msg_str)
-                        logger.write("found " + check_msg_str + "\n")
-                        # print(hex(message.DATA[0]))
-                        return message
+                    if "ID=07A9" in str_msg:
+                        logger.write('response message:' + str_msg + "\n")
+                        match_group = re.match(check_msg_str.upper(), str_msg)
+                        if match_group:
+                            # print("found ", check_msg_str)
+                            logger.write("found " + check_msg_str + "\n")
+                            # print(hex(message.DATA[0]))
+                            return message
             else:
                 time.sleep(0.002)
             flag_wait = re.match(wait_flag.upper(), str_msg.upper())

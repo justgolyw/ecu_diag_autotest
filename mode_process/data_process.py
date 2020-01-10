@@ -88,7 +88,7 @@ class DataProcess():
     # 读取文件夹下特定后缀名的文件
     def open_files(self, file_path):
         file_line_list = []
-        file_list = self.get_file_list(file_path, ['.srec'])
+        file_list = self.get_file_list(file_path, ['.srec', '.s19'])
         for file in file_list:
             with open(file, 'r') as f:
                 line_list = f.readlines()
